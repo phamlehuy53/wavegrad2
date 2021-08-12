@@ -1,5 +1,5 @@
 train:
-  batch_size: 12
+  batch_size: 4
   adam:
     lr: 3e-4
     weight_decay: 1e-6
