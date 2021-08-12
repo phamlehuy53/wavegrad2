@@ -32,7 +32,7 @@ class Preprocessor:
         speakers = {}
         for i, speaker in enumerate(tqdm(os.listdir(self.in_dir))):
             speakers[speaker] = i
-            for wav_name in os.listdir(os.path.join(self.in_dir, speaker)):
+            for wav_name in tqdm(os.listdir(os.path.join(self.in_dir, speaker)), desc=speaker):
                 if ".wav" not in wav_name:
                     continue
 
@@ -48,7 +48,7 @@ class Preprocessor:
                         info, n = ret
                     out.append(info)
 
-                n_frames += n
+                    n_frames += n
 
         # Save files
         with open(os.path.join(self.out_dir, "speakers.json"), "w") as f:
