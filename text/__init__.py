@@ -73,7 +73,7 @@ class Language():
                 'eng', 'eng2', 'cmu') else None
             if not m:
                 sequence += self._symbols_to_sequence(
-                    self._clean_text(m.group(1), cleaner_names))
+                    self._clean_text(text, cleaner_names))
                 break
             sequence += self._symbols_to_sequence(
                 self._clean_text(m.group(1), cleaner_names))
