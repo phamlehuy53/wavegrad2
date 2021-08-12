@@ -136,3 +136,14 @@ def japanese_kana_cleaners(text):
   '''Pipeline for Japanese text, including collapses whitespace.'''
   text = collapse_whitespace(text)
   return text
+def vietnamese_cleaners(text):
+    # TODO: What punctuations is needed
+    # text = re.sub('['+punctuation+']', ' ', text) #
+    text = lowercase(text)
+    # text = expand_numbers(text) # TODO: expand vietnamese numbers
+
+    # TODO:Need abbreviation for vietnamese
+    # text = expand_abbreviations(text)
+    text = collapse_whitespace(text)
+    text = text.strip()
+    return text

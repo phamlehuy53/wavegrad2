@@ -4,7 +4,7 @@ import argparse
 
 from omegaconf import OmegaConf as OC
 
-from preprocessor import ljspeech
+from preprocessor import ljspeech, viet_tts
 
 
 def main(args):
@@ -12,6 +12,8 @@ def main(args):
     if "LJSpeech" in hparams.dataset:
         ljspeech.prepare_align(hparams)
 
+    if 'viet_tts' in config["dataset"]:
+        viet_tts.prepare_align(hparams)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

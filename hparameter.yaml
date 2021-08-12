@@ -13,14 +13,14 @@ train:
     dur: 1.0
 
 data:
-  lang: 'eng'
-  text_cleaners: ['english_cleaners'] # korean_cleaners, english_cleaners, chinese_cleaners
-  speakers: ['LJSpeech']
-  train_dir: 'preprocessed_data/LJSpeech'
+  lang: 'vie'
+  text_cleaners: ['vietnamese_cleaners'] # korean_cleaners, english_cleaners, chinese_cleaners, vietnamese_cleaners
+  speakers: ['vlsp2017']
+  train_dir: 'preprocessed_data'
   train_meta: 'train.txt'  # relative path of metadata file from train_dir
-  val_dir: 'preprocessed_data/LJSpeech'
+  val_dir: 'preprocessed_data'
   val_meta: 'val.txt'  # relative path of metadata file from val_dir'
-  lexicon_path: 'lexicon/librispeech-lexicon.txt'
+  lexicon_path: 'lexicon/viet-tts-lexicon.txt'
 
 audio:
   n_mel_channels: 80

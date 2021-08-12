@@ -2,7 +2,7 @@
 #https://github.com/keithito/tacotron
 import re
 from text import cleaners
-from text.symbols import eng_symbols, cmu_symbols, kor_symbols, cht_symbols, jap_romaji_symbols, jap_kana_symbols
+from text.symbols import eng_symbols, cmu_symbols, kor_symbols, cht_symbols, jap_romaji_symbols, jap_kana_symbols, vie_symbols
 
 
 class Language():
@@ -32,6 +32,9 @@ class Language():
     elif lang == 'jap_kana':
       available_cleaners = ['japanese_kana_cleaners']
       symbols = jap_kana_symbols
+    elif lang='vie':
+      available_cleaners = ['vietnamese_cleaners']
+      symbols = vie_symbols
     else:
       raise RuntimeError('Wrong type of lang')
     for text_cleaner in text_cleaners:
