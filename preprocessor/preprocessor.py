@@ -40,7 +40,7 @@ class Preprocessor:
                 tg_path = os.path.join(
                     self.out_dir, "TextGrid", speaker, "{}.TextGrid".format(basename)
                 )
-                if os.path.exists(tg_path):
+                if os.path.isfile(tg_path):
                     ret = self.process_utterance(speaker, basename)
                     if ret is None:
                         continue
