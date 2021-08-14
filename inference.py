@@ -64,6 +64,28 @@ def preprocess_eng(hparams, text):
     text = text.unsqueeze(0)
     return text
 
+
+def preprocess_vie(hparams, text):
+    lexicon = read_lexicon(hparams.data.lexicon_path)
+
+    phones = []
+    words = re.split(r"([,;.\-\?\!\s+])", text)
+    for w in words:
+        if w.lower() in lexicon:
+            phones += lexicon[w.lower()]
+        else:
+            print(f"Phone not found {w}")
+            pass
+    phones = "{" + "}{".join(phones) + "}"
+    phones = re.sub(r"\{[^\w\s]?\}", "{sp}", phones)
+    print('g2p: ', phones)
+
+    trainset = TextAudioDataset(hparams, hparams.data.train_dir, hparams.data.train_meta, train=False)
+
+    text = trainset.get_text(phones)
+    text = text.unsqueeze(0)
+    return text
+
 def preprocess_mandarin(hparams, text):
     lexicon = read_lexicon(hparams.data.lexicon_path)
 
@@ -136,6 +158,8 @@ if __name__ == '__main__':
     model.load_state_dict(ckpt['state_dict'] if not('EMA' in args.checkpoint) else ckpt)
     if hparams.data.lang == 'eng':
         text = preprocess_eng(hparams, args.text)
+    if hparams.data.lang == 'vie':
+        text = preprocess_vie(hparams, args.text)
 
     speaker_dict = {spk: idx for idx, spk in enumerate(hparams.data.speakers)}
     spk_id = [speaker_dict[args.speaker]]
