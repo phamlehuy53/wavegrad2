@@ -16,6 +16,7 @@ import re
 
 from dataloader import TextAudioDataset
 from string import punctuation
+import time
 
 
 def save_stft_mag(wav, fname):
@@ -178,8 +179,9 @@ if __name__ == '__main__':
     text = text.cuda()
     spk_id = spk_id.cuda()
 
+    start = time.time()
     wav_recon, align, *_ = model.inference(text, spk_id, pace=args.pace)
-
+    print(f"Inference time: {time.time()-start}")
     save_stft_mag(wav_recon, os.path.join(
         hparams.log.test_result_dir, f'{args.text}.png'))
     swrite(os.path.join(hparams.log.test_result_dir, f'{args.text}.wav'),
