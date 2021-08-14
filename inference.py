@@ -159,7 +159,7 @@ if __name__ == '__main__':
     if hparams.data.lang == 'eng':
         text = preprocess_eng(hparams, args.text)
     if hparams.data.lang == 'vie':
-        text = preprocess_vie(hparams, args.text)
+        text = preprocess_vie(hparams, open(args.text).read().strip())
 
     speaker_dict = {spk: idx for idx, spk in enumerate(hparams.data.speakers)}
     spk_id = [speaker_dict[args.speaker]]
