@@ -15,12 +15,13 @@ from pypinyin import pinyin, Style
 import re
 
 from dataloader import TextAudioDataset
+from string import punctuation
 
 
 def save_stft_mag(wav, fname):
     fig = plt.figure(figsize=(9, 3))
     plt.imshow(rosa.amplitude_to_db(stft(wav[0].detach().cpu()).numpy(),
-               ref=np.max, top_db = 80.),
+               ref=np.max, top_db=80.),
                aspect='auto',
                origin='lower',
                interpolation='none')
@@ -32,6 +33,7 @@ def save_stft_mag(wav, fname):
     plt.close()
     return
 
+
 def read_lexicon(lex_path):
     lexicon = {}
     with open(lex_path) as f:
@@ -42,6 +44,7 @@ def read_lexicon(lex_path):
             if word.lower() not in lexicon:
                 lexicon[word.lower()] = phones
     return lexicon
+
 
 def preprocess_eng(hparams, text):
     lexicon = read_lexicon(hparams.data.lexicon_path)
@@ -58,7 +61,8 @@ def preprocess_eng(hparams, text):
     phones = re.sub(r"\{[^\w\s]?\}", "{sp}", phones)
     print('g2p: ', phones)
 
-    trainset = TextAudioDataset(hparams, hparams.data.train_dir, hparams.data.train_meta, train=False)
+    trainset = TextAudioDataset(
+        hparams, hparams.data.train_dir, hparams.data.train_meta, train=False)
 
     text = trainset.get_text(phones)
     text = text.unsqueeze(0)
@@ -66,25 +70,28 @@ def preprocess_eng(hparams, text):
 
 
 def preprocess_vie(hparams, text):
+    text = text.rstrip(punctuation)
     lexicon = read_lexicon(hparams.data.lexicon_path)
 
+    g2p = G2p()
     phones = []
     words = re.split(r"([,;.\-\?\!\s+])", text)
     for w in words:
         if w.lower() in lexicon:
             phones += lexicon[w.lower()]
         else:
-            print(f"Phone not found {w}")
-            pass
+            phones += list(filter(lambda p: p != " ", g2p(w)))
     phones = "{" + "}{".join(phones) + "}"
     phones = re.sub(r"\{[^\w\s]?\}", "{sp}", phones)
     print('g2p: ', phones)
 
-    trainset = TextAudioDataset(hparams, hparams.data.train_dir, hparams.data.train_meta, train=False)
+    trainset = TextAudioDataset(
+        hparams, hparams.data.train_dir, hparams.data.train_meta, train=False)
 
     text = trainset.get_text(phones)
     text = text.unsqueeze(0)
     return text
+
 
 def preprocess_mandarin(hparams, text):
     lexicon = read_lexicon(hparams.data.lexicon_path)
@@ -105,12 +112,14 @@ def preprocess_mandarin(hparams, text):
     phones = "{" + " ".join(phones) + "}"
     print('g2p: ', phones)
 
-    trainset = TextAudioDataset(hparams, hparams.data.train_dir, hparams.data.train_meta, train=False)
+    trainset = TextAudioDataset(
+        hparams, hparams.data.train_dir, hparams.data.train_meta, train=False)
 
     text = trainset.get_text(phones)
     text = text.unsqueeze(0)
 
     return text
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -155,7 +164,8 @@ if __name__ == '__main__':
     model = Wavegrad2(hparams).to(args.device)
     stft = STFTMag()
     ckpt = torch.load(args.checkpoint, map_location='cpu')
-    model.load_state_dict(ckpt['state_dict'] if not('EMA' in args.checkpoint) else ckpt)
+    model.load_state_dict(ckpt['state_dict'] if not(
+        'EMA' in args.checkpoint) else ckpt)
     if hparams.data.lang == 'eng':
         text = preprocess_eng(hparams, args.text)
     if hparams.data.lang == 'vie':
@@ -170,7 +180,7 @@ if __name__ == '__main__':
 
     wav_recon, align, *_ = model.inference(text, spk_id, pace=args.pace)
 
-    save_stft_mag(wav_recon, os.path.join(hparams.log.test_result_dir, f'{args.text}.png'))
+    save_stft_mag(wav_recon, os.path.join(
+        hparams.log.test_result_dir, f'{args.text}.png'))
     swrite(os.path.join(hparams.log.test_result_dir, f'{args.text}.wav'),
            hparams.audio.sampling_rate, wav_recon[0].detach().cpu().numpy())
-
